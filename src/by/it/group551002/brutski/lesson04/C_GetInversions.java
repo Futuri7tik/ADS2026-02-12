@@ -43,9 +43,13 @@ public class C_GetInversions {
         System.out.print(result);
     }
 
+    static int inversions;
+
     int calc(InputStream stream) throws FileNotFoundException {
         //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
+        inversions = 0;
+
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!
         //размер массива
         int n = scanner.nextInt();
@@ -57,8 +61,43 @@ public class C_GetInversions {
         int result = 0;
         //!!!!!!!!!!!!!!!!!!!!!!!!     тут ваше решение   !!!!!!!!!!!!!!!!!!!!!!!!
 
-
+        mergeSortAndCount(a, 0, n - 1);
+        result = inversions;
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
+    }
+
+    void mergeSortAndCount(int[] arr, int left, int right) {
+        if (left == right)
+            return;
+
+        int mid = (left + right) / 2;
+
+        mergeSortAndCount(arr, left, mid);
+        mergeSortAndCount(arr, mid + 1, right);
+
+        int[] merged = new int[right - left + 1];
+        int left_curr = left, right_curr = mid + 1, i = 0;
+
+        while (left_curr <= mid && right_curr <= right) {
+            if (arr[left_curr] <= arr[right_curr]) {
+                merged[i++] = arr[left_curr];
+                left_curr++;
+            }
+            else {
+                merged[i++] = arr[right_curr];
+                inversions++;
+                right_curr++;
+            }
+        }
+
+        while (left_curr <= mid)
+            merged[i++] = arr[left_curr++];
+
+        while (right_curr <= right)
+            merged[i++] = arr[right_curr++];
+
+
+        System.arraycopy(merged, 0, arr, left, right + 1 - left);
     }
 }
