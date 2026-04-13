@@ -40,8 +40,28 @@ public class B_CountSort {
         }
         //тут реализуйте логику задачи с применением сортировки подсчетом
 
+        int max;
+        int min = max = points[0];
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        for (int i = 0; i < n; i++) {
+            if (points[i] < min)
+                min = points[i];
+            if (points[i] > max)
+                max = points[i];
+        }
+
+        int[] count = new int[max - min + 1];
+
+        for (int i = 0; i < n; i++) {
+            count[points[i] - min]++;
+        }
+
+        int ind = 0;
+        for (int i = 0; i < max - min + 1; i++) {
+            for (int j = 0; j < count[i]; j++)
+                points[ind++] = i + min;
+        }
+                //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return points;
     }
 

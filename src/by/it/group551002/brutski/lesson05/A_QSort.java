@@ -2,6 +2,7 @@ package by.it.group551002.brutski.lesson05;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /*
@@ -45,6 +46,36 @@ public class A_QSort {
         }
     }
 
+    public static void QuickSort(Segment[] segs, int l, int r) {
+        if (l >= r)
+            return;
+
+        int i = l, j = r;
+        Segment pivot = segs[(l + r) / 2];
+
+        while (i <= j) {
+            while (segs[i].compareTo(pivot) < 0)
+                i++;
+
+            while (segs[j].compareTo(pivot) > 0)
+                j--;
+
+            if (i <= j) {
+                Segment temp = segs[i];
+                segs[i] = segs[j];
+                segs[j] = temp;
+                i++;
+                j--;
+            }
+        }
+
+        if (l < j)
+            QuickSort(segs, l, j);
+
+        if (i < r)
+            QuickSort(segs, i, r);
+    }
+
     int[] getAccessory(InputStream stream) throws FileNotFoundException {
         //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
@@ -52,6 +83,7 @@ public class A_QSort {
         //число отрезков отсортированного массива
         int n = scanner.nextInt();
         Segment[] segments = new Segment[n];
+
         //число точек
         int m = scanner.nextInt();
         int[] points = new int[m];
@@ -70,6 +102,19 @@ public class A_QSort {
         //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
 
 
+        QuickSort(segments, 0, n-1);
+
+        for (int i = 0; i < m; i++) {
+            int point = points[i];
+            int count = 0;
+
+            for (int j = 0; j < n; j++) {
+                if (point >= segments[j].start && point <= segments[j].stop)
+                    count += 1;
+            }
+
+            result[i] = count;
+        }
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
@@ -80,6 +125,12 @@ public class A_QSort {
         int stop;
 
         Segment(int start, int stop) {
+            if (start > stop) {
+                int temp = start;
+                start = stop;
+                stop = temp;
+            }
+
             this.start = start;
             this.stop = stop;
             //тут вообще-то лучше доделать конструктор на случай если
@@ -89,8 +140,11 @@ public class A_QSort {
         @Override
         public int compareTo(Segment o) {
             //подумайте, что должен возвращать компаратор отрезков
+            if (this.start != o.start)
+                return Integer.compare(this.start, o.start);
 
-            return 0;
+
+            return Integer.compare(this.stop, o.stop);
         }
     }
 
