@@ -43,69 +43,114 @@ public class ListB<E> implements List<E> {
     /////////////////////////////////////////////////////////////////////////
     @Override
     public String toString() {
-        return "";
+        StringBuilder str = new StringBuilder();
+        str.append('[');
+        for (int i = 0; i < size; ++i) {
+            if (i != 0) {
+                str.append(", ");
+            }
+            Object e = elems[i];
+            str.append(e == this ? "(this Collection)" : String.valueOf(e));
+        }
+        str.append("]");
+
+        return str.toString();
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        realloc_elems(size + 1);
+        elems[size++] = e;
+        return true;
     }
 
     @Override
-    public E remove(int index) {
-        return null;
+    public E remove(int ind) {
+        check_ind(ind, false);
+        E removed = (E) elems[ind];
+        System.arraycopy(elems, ind + 1, elems, ind, size - ind - 1);
+        elems[size--] = null;
+        return removed;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public void add(int index, E element) {
-
+        check_ind(index, true);
+        realloc_elems(size + 1);
+        System.arraycopy(elems, index, elems, index + 1, size - index);
+        elems[index] = element;
+        ++size;
     }
 
     @Override
     public boolean remove(Object o) {
+        int ind = indexOf(o);
+        if (ind != -1) {
+            remove(ind);
+            return true;
+        }
         return false;
     }
 
     @Override
     public E set(int index, E element) {
-        return null;
+        check_ind(index, false);
+        E old_elem = (E) elems[index];
+        elems[index] = element;
+        return old_elem;
     }
 
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
 
     @Override
     public void clear() {
-
+        for (int i = 0; i < size; ++i)
+            elems[i] = null;
+        size = 0;
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        for (int i = 0; i < size; ++i) {
+            if (elems[i] == null && o == null) {
+                return i;
+            }
+            if (elems[i] != null && elems[i].equals(o))
+                return i;
+        }
+        return -1;
     }
 
     @Override
     public E get(int index) {
-        return null;
+        check_ind(index, false);
+        return (E) elems[index];
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return indexOf(o) != -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        for (int i = size - 1; i > -1; --i) {
+            if (elems[i] == null && o == null) {
+                return i;
+            } else if (elems[i] != null && elems[i].equals(o))
+                return i;
+        }
+        return -1;
     }
 
 
